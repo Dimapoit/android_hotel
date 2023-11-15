@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_routes"
+    app:startDestination="@id/hotelFragment">
+
+    <fragment
+        android:id="@+id/hotelFragment"
+        android:name="com.home.android_hotel.ui.HotelFragment"
+        android:label="Отель"
+        tools:layout="@layout/fragment_hotel" >
+        <action
+            android:id="@+id/action_hotelFragment_to_roomFragment"
+            app:destination="@id/roomFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/roomFragment"
+        android:name="com.home.android_hotel.ui.RoomFragment"
+        android:label="Steigenberger Makadi"
+        tools:layout="@layout/fragment_room" >
+        <action
+            android:id="@+id/action_roomFragment_to_reservationFragment"
+            app:destination="@id/reservationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/reservationFragment"
+        android:name="com.home.android_hotel.ui.ReservationFragment"
+        android:label="Бронирование"
+        tools:layout="@layout/fragment_reservation" >
+        <action
+            android:id="@+id/action_reservationFragment_to_orderFragment"
+            app:destination="@id/orderFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderFragment"
+        android:name="com.home.android_hotel.ui.OrderFragment"
+        android:label="Заказ оплачен"
+        tools:layout="@layout/fragment_order" />
+</navigation>
