@@ -5,10 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.NavHostFragment
+import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
 import com.home.android_hotel.R
 import com.home.android_hotel.databinding.FragmentHotelBinding
+import com.home.fooddelivery.ui.menu.adapters.ViewPagerAdapter.HotelAdapter
 
 
 class HotelFragment : Fragment() {
@@ -16,6 +19,11 @@ class HotelFragment : Fragment() {
     private var _binding: FragmentHotelBinding? = null
     private val binding
         get() = _binding ?: throw java.lang.RuntimeException("FragmentHotelBinding == null")
+
+
+    private lateinit var hotelPager: ViewPager2
+    private lateinit var hotelAdapter: HotelAdapter
+    private lateinit var pageChangeListener: ViewPager2.OnPageChangeCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +43,8 @@ class HotelFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initSlider()
+
         binding.toChooseRoom.setOnClickListener {
             findNavController().navigate(R.id.roomFragment)
         }
@@ -43,6 +53,58 @@ class HotelFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun initSlider() {
+        hotelPager = binding.includeSlider.slider
+        hotelAdapter = HotelAdapter()
+        hotelPager.adapter = hotelAdapter
+
+        val dotsIndicator: LinearLayout = binding.includeSlider.dotsIndicator
+
+        val params = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            setMargins(8, 0, 8, 0)
+        }
+
+        val dotsArray = Array(hotelAdapter.imageArray.size) { ImageView(context) }
+
+        dotsArray.forEach {
+            it.setImageResource(
+                R.drawable.dot_inactive
+            )
+            dotsIndicator.addView(it, params)
+        }
+
+        // По умолчанию выбрана первое фото
+        if (dotsArray.isNotEmpty()) {
+            dotsArray[0].setImageResource(R.drawable.dot_active)
+        }
+
+//        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+//            override fun onPageSelected(position: Int) {
+//                super.onPageSelected(position)
+//                sliderAdapter.setDotsIndicator(dotsIndicator, position)
+//            }
+//        })
+
+        pageChangeListener = object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                dotsArray.mapIndexed { index, imageView ->
+                    if (position == index) {
+                        imageView.setImageResource(
+                            R.drawable.dot_active
+                        )
+                    } else {
+                        imageView.setImageResource(R.drawable.dot_inactive)
+                    }
+                }
+                super.onPageSelected(position)
+            }
+        }
+        hotelPager.registerOnPageChangeCallback(pageChangeListener)
     }
 
     companion object {

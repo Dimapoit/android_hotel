@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <!-- Градиент от цвета colorStart до colorEnd -->
+    <gradient
+        android:startColor="#000"
+        android:endColor="#ddd"
+        android:type="linear"
+        android:angle="90" />
+
+    <!-- Радиус для круглой точки -->
+    <size
+        android:width="7dp"
+        android:height="7dp" />
+</shape>

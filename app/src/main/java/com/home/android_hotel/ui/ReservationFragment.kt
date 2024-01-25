@@ -1,14 +1,15 @@
 package com.home.android_hotel.ui
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.NavHostFragment
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.home.android_hotel.R
-import com.home.android_hotel.databinding.FragmentHotelBinding
 import com.home.android_hotel.databinding.FragmentReservationBinding
 
 // TODO: Rename parameter arguments, choose names that match
@@ -50,6 +51,66 @@ class ReservationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.textEditPhone.addTextChangedListener(object : TextWatcher {
+
+            var isFormatting: Boolean = false
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Ничего не делаем
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Проверяем, что введенные символы являются цифрами
+
+                Log.d("onTextChanged", "$s")
+                if (s != null && s.isNotEmpty() && s.length <= 18)  {
+                    val formattedNumber = StringBuilder()
+                    if (s[0].isDigit()){
+                        // Добавляем символы из шаблона +7 (***) ***-**-**
+                        formattedNumber.append("+7 (")
+                    }
+                    for (i in s.indices) {
+//                        if (i == 7 && s[i] != ' '){
+//                            formattedNumber. append(" (${s[i]}")
+//                        }
+                        if (i == 7 && s[i] != ')') {
+                            formattedNumber.append(") ${s[i]}")
+                        } else if ((i == 12 || i == 15) && s[i] != '-') {
+                            formattedNumber.append("-${s[i]}")
+                        } else {
+                            formattedNumber.append(s[i])
+                        }
+                    }
+                    binding.textInputPhone.error = null
+                    binding.textEditPhone.removeTextChangedListener(this)
+                    binding.textEditPhone.setText(formattedNumber)
+                    binding.textEditPhone.setSelection(formattedNumber.length)
+                    binding.textEditPhone.addTextChangedListener(this)
+                }
+                else {
+                    // Если длина введенного текста достигла максимальной длины маски (18 символов),
+                    // то блокируем дальнейший ввод
+                    binding.textEditPhone.removeTextChangedListener(this)
+                    binding.textInputPhone.error = "Максимальная длина номера телефона достигнута"
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // Ничего не делаем
+            }
+        })
+
+        binding.openInfoButton.setOnClickListener {
+            val visibility = binding.inputLayout.visibility
+            if (visibility == View.GONE) {
+                binding.inputLayout.visibility = View.VISIBLE
+                binding.openInfoButton.setImageResource(R.drawable.ic_up_arrow)
+            } else {
+                binding.inputLayout.visibility = View.GONE
+                binding.openInfoButton.setImageResource(R.drawable.ic_down_arrow)
+            }
+        }
 
         binding.pay.setOnClickListener {
             findNavController().navigate(R.id.orderFragment)
